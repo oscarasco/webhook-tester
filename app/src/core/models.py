@@ -1,16 +1,31 @@
 import datetime
-import uuid
-from typing import Optional, Dict
+from typing import Optional, Dict, Annotated
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, BeforeValidator, ConfigDict
+
+PyObjectId = Annotated[str, BeforeValidator(str)]
 
 
 class Message(BaseModel):
 
+    message_id: Optional[PyObjectId] = Field(alias="_id", default=None)
     path: str
-    body: Optional[Dict] = Field(default_factory=dict)
+    extra: Optional[Dict] = Field(default_factory=dict)
+    response_status_code: int
+    server_timeout: int
 
-    customer_created_request_at: Optional[datetime.datetime] = None
-    received_at: datetime.datetime
+    service_sent_message_at: Optional[datetime.datetime] = None
+    server_received_message_at: datetime.datetime
     created_at: Optional[datetime.datetime] = Field(
         default=datetime.datetime.utcnow())
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+
+class Path(BaseModel):
+
+    path: str
+    total_message: int
+    last_message_at: datetime.datetime

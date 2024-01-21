@@ -1,4 +1,12 @@
 from .message import (
     MessageRequest,
-    MessageResponse
+    MessagePayloadResponse,
+    Messages,
+    Message,
+    MessageDetails
+)
+
+from .paths import (
+    Paths,
+    Path
 )
