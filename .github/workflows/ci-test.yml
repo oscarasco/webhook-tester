@@ -1,0 +1,22 @@
+name: CI Test
+
+on:
+  push:
+    branches: ["develop"]
+  pull_request:
+    branches: ["develop"]
+
+jobs:
+
+  ci-test:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+        token: ${{ secrets.PAT_TOKEN }}
+    - name: Build the Docker image
+      run: |
+        docker build -t webhook-tester_test --target=test .
+        docker run -t webhook-tester_test | tee test_output.txt
