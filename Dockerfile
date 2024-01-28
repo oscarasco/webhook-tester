@@ -15,6 +15,7 @@ RUN pip3 install -r requirements.txt
 
 WORKDIR /app
 COPY ./app/src/ /app
+COPY ./.cz.toml /cz.toml
 
 FROM base as test
 
