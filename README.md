@@ -1,4 +1,5 @@
 ![example workflow](https://github.com/oscarasco/webhook-tester/actions/workflows/ci-test.yml/badge.svg)
+![](https://github.com/oscarasco/webhook-tester/app/test/coverage.svg)
 ![example workflow](https://github.com/oscarasco/webhook-tester/actions/workflows/ci.yml/badge.svg)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 # Webhook Tester
