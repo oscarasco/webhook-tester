@@ -1,20 +1,22 @@
 import uuid
-from typing import Optional, List, Annotated, Dict
+from functools import cached_property
+from typing import Optional, List, Annotated
 
 from pydantic import BeforeValidator
 from pymongo import MongoClient, DESCENDING
 
+from config import settings
 from core import models
 from core.services.db_service.query_builder import (
     MongoQueryBuilder,
     PATHS_PIPELINE
 )
-from core.services.db_service.query_builder import MongoQueryBuilder
 
 PyObjectId = Annotated[str, BeforeValidator(str)]
 
-
-#TODO: aggiungere mappers su tutte le trasformazioni da models -> schema
+MONGO_SCHEMA = settings.MONGO_SCHEMA
+MONGO_PORT = settings.MONGO_PORT
+MONGO_HOST = settings.MONGO_HOST
 
 
 class DbService:
@@ -22,9 +24,16 @@ class DbService:
     DB_NAME = 'webhook'
     COLLECTION_NAME = 'messages'
 
-    def __init__(self):
-        # TODO: aggiungere settings
-        self.client = MongoClient('mongodb://localhost:27017')
+    def __init__(self, schema: str, netloc: str, port: int):
+        self.schema = schema
+        self.netloc = netloc
+        self.port = port
+
+    @cached_property
+    def client(self) -> MongoClient:
+
+        url = "{}://{}:{}".format(self.schema, self.netloc, self.port)
+        return MongoClient(url)
 
     @property
     def db(self):
@@ -81,5 +90,4 @@ class DbService:
         return models.Message.model_validate(fetched_document)
 
 
-db_service = DbService()
-
+db_service = DbService(schema=MONGO_SCHEMA, netloc=MONGO_HOST, port=MONGO_PORT)
