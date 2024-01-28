@@ -1,9 +1,24 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
+from functools import cached_property
+
+import toml
+
+from config import settings
+
+TOML_FILE = settings.CZ_TOML_PATH
 
 
-class Version(BaseModel):
+@dataclass
+class Version:
 
-    version: str = "v.0.0.1"
+    toml_filepath: str
+
+    @cached_property
+    def version(self):
+        with open(self.toml_filepath, 'r') as f:
+            config = toml.load(f)
+
+        return config['tool']['commitizen']['version']
 
 
-webhook_tester_version = Version()
+webhook_tester_version = Version(toml_filepath=TOML_FILE)
