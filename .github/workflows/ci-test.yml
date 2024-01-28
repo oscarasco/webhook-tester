@@ -21,4 +21,4 @@ jobs:
     - name: Build the Docker image
       run: |
         docker build -t webhook-tester_test --target=test .
-        docker run -t webhook-tester_test | tee test_output.txt
+        docker run -t webhook-tester_test
