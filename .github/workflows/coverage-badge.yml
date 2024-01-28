@@ -45,6 +45,6 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add coverage.svg
+        git add /home/runner/work/webhook-tester/webhook-tester/app/test/coverage.svg
         git commit -m "chore: update coverage badge"
         git push
