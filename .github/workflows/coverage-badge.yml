@@ -4,12 +4,9 @@ on:
   push:
     branches:
       - develop
-  pull_request:
-    branches:
-      - develop
 
 jobs:
-  build:
+  generate_coverage_badge:
 
     runs-on: ubuntu-latest
 
@@ -41,10 +38,11 @@ jobs:
         coverage-badge -o coverage.svg
 
     - name: Commit and push badge
-      if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+      env:
+        GH_TOKEN: ${{ secrets.PAT_TOKEN }}
       run: |
-        git config --local user.email "action@github.com"
+        git config --local user.email "enricovela@gmail.com"
         git config --local user.name "GitHub Action"
-        git add /home/runner/work/webhook-tester/webhook-tester/app/test/coverage.svg
+        git add app/test/coverage.svg
         git commit -m "chore: update coverage badge"
-        git push
+        git push https://github.com/oscarasco/webhook-tester.git HEAD:develop
