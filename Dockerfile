@@ -1,11 +1,11 @@
-FROM node:latest as node
+FROM node:18.18 as node
 WORKDIR /app
 COPY ./frontend/ .
 RUN npm install
 RUN npm run build-prod
 
 
-FROM mongo:latest as base
+FROM mongo:6.0.13-jammy  as base
 
 RUN apt-get update && \
     apt-get install -y python3 python3-pip nginx
@@ -25,6 +25,9 @@ RUN pip3 install -r requirements-test.txt
 CMD ["pytest", "-c", "docker-test.ini"]
 
 FROM base as service
+
+ENV WORKERS_NUMBER 4
+
 COPY --from=node /app/dist/webhook-tester-ui /var/www/html/
 COPY ./start.sh /start.sh
 CMD ["sh", "/start.sh"]
