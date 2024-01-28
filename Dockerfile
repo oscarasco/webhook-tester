@@ -25,6 +25,9 @@ RUN pip3 install -r requirements-test.txt
 CMD ["pytest", "-c", "docker-test.ini"]
 
 FROM base as service
+
+ENV WORKERS_NUMBER 4
+
 COPY --from=node /app/dist/webhook-tester-ui /var/www/html/
 COPY ./start.sh /start.sh
 CMD ["sh", "/start.sh"]
