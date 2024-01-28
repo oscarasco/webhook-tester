@@ -1,11 +1,11 @@
-FROM node:latest as node
+FROM node:18.18 as node
 WORKDIR /app
 COPY ./frontend/ .
 RUN npm install
 RUN npm run build-prod
 
 
-FROM mongo:latest as base
+FROM mongo:6.0.13-jammy  as base
 
 RUN apt-get update && \
     apt-get install -y python3 python3-pip nginx
