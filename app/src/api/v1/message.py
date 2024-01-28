@@ -18,9 +18,12 @@ async def post_message(
         request: Request,
         _id: uuid.UUID = Path(alias="id"),
         message: schema.MessageRequest = Body(default_factory=dict),
-        response_status_code: Optional[int] = Query(default=204, alias="responseStatusCode"),
-        response_timeout_s: Optional[int] = 0,
-        return_request_payload: Optional[bool] = False,
+        response_status_code: Optional[int] = Query(
+            default=204, alias="responseStatusCode"),
+        response_timeout_s: Optional[int] = Query(
+            default=0, alias='responseTimeoutS'),
+        return_request_payload: Optional[bool] = Query(
+            default=False, alias='returnRequestPayload'),
         response: Response = Response()
 ) -> Optional[schema.MessagePayloadResponse]:
 
