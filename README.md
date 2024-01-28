@@ -1,7 +1,7 @@
 ![example workflow](https://github.com/oscarasco/webhook-tester/actions/workflows/ci-test.yml/badge.svg)
 ![example workflow](https://github.com/oscarasco/webhook-tester/actions/workflows/ci.yml/badge.svg)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
-# Self-Hosted Webhook Tester
+# Webhook Tester
 
 Explore the flexibility of our self-hosted webhook tester powered by our containerized application. With no restrictions on the number of notifications an endpoint can receive and the ability to fully configure server responses including status codes and timeouts.
 
