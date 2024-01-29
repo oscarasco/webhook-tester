@@ -1,7 +1,7 @@
 import datetime
 import time
 import uuid as uuid
-from typing import Optional, List
+from typing import Optional, List, Literal
 
 from fastapi import APIRouter, Request, Response, Body, Path, Query
 
@@ -50,10 +50,27 @@ async def post_message(
 
 
 @router.get("/paths")
-async def get_active_paths() -> schema.Paths:
+async def get_active_paths(
+        order_by: Literal['totalMessage', 'lastMessage'] = Query(
+            alias="orderBy", default='totalMessage'
+        ),
+        order: Literal['descending', 'ascending'] = Query(
+            default='descending'
+        )
+) -> schema.Paths:
 
     path = db_service.fetch_paths()
-    return schema.Paths([schema.Path.model_validate(i) for i in path])
+
+    sorting_criteria = (lambda x: x.total_message, lambda x: x.last_message_at)
+    # TODO: in refactor capire a quale service delegare
+    sorted_response = schema.Paths(
+        sorted(
+            [schema.Path.model_validate(i) for i in path],
+            reverse=order == 'descending',
+            key=sorting_criteria[order_by == "lastMessage"]
+        )
+    )
+    return sorted_response
 
 
 @router.get("/paths/messages")
