@@ -42,3 +42,11 @@ class TestPostMessage(TestCase):
         path = self.url_builder(str(uuid.uuid4())+params)
         response = self.client.post(path, json={})
         self.assertEqual(500, response.status_code)
+
+    @mock.patch("pymongo.collection.Collection.insert_one")
+    def test_post_message_default_server_timeout(self, mock_insert_one):
+
+        params = "/?responseTimeoutS=1"
+        path = self.url_builder(str(uuid.uuid4())+params)
+        response = self.client.post(path, json={})
+        self.assertEqual(204, response.status_code)

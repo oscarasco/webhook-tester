@@ -1,0 +1,48 @@
+name: Coverage
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  generate_coverage_badge:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.10.12
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r app/test/requirements-test.txt
+
+    - name: Run tests with coverage
+      run: |
+        cd app/test/
+        coverage run -m pytest
+        coverage report -m
+
+    - name: Generate coverage badge
+      run: |
+        pip install coverage-badge
+        cd app/test/
+        coverage-badge -o coverage.svg
+
+    - name: Commit and push badge
+      env:
+        GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+      run: |
+        git config --local user.email "enricovela@gmail.com"
+        git config --local user.name "GitHub Action"
+        git add app/test/coverage.svg
+        git commit -m "chore: update coverage badge"
+        git push https://github.com/oscarasco/webhook-tester.git HEAD:develop

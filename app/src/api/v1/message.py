@@ -1,7 +1,7 @@
 import datetime
 import time
 import uuid as uuid
-from typing import Optional, List
+from typing import Optional, List, Literal
 
 from fastapi import APIRouter, Request, Response, Body, Path, Query
 
@@ -18,9 +18,12 @@ async def post_message(
         request: Request,
         _id: uuid.UUID = Path(alias="id"),
         message: schema.MessageRequest = Body(default_factory=dict),
-        response_status_code: Optional[int] = Query(default=204, alias="responseStatusCode"),
-        response_timeout_s: Optional[int] = 0,
-        return_request_payload: Optional[bool] = False,
+        response_status_code: Optional[int] = Query(
+            default=204, alias="responseStatusCode"),
+        response_timeout_s: Optional[int] = Query(
+            default=0, alias='responseTimeoutS'),
+        return_request_payload: Optional[bool] = Query(
+            default=False, alias='returnRequestPayload'),
         response: Response = Response()
 ) -> Optional[schema.MessagePayloadResponse]:
 
@@ -47,10 +50,27 @@ async def post_message(
 
 
 @router.get("/paths")
-async def get_active_paths() -> schema.Paths:
+async def get_active_paths(
+        order_by: Literal['totalMessage', 'lastMessage'] = Query(
+            alias="orderBy", default='totalMessage'
+        ),
+        order: Literal['descending', 'ascending'] = Query(
+            default='descending'
+        )
+) -> schema.Paths:
 
     path = db_service.fetch_paths()
-    return schema.Paths([schema.Path.model_validate(i) for i in path])
+
+    sorting_criteria = (lambda x: x.total_message, lambda x: x.last_message_at)
+    # TODO: in refactor capire a quale service delegare
+    sorted_response = schema.Paths(
+        sorted(
+            [schema.Path.model_validate(i) for i in path],
+            reverse=order == 'descending',
+            key=sorting_criteria[order_by == "lastMessage"]
+        )
+    )
+    return sorted_response
 
 
 @router.get("/paths/messages")
